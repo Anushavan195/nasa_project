@@ -30,16 +30,19 @@ class ApiConnector
         return Http::get($this->url . "?" . $this->from . "&" . $this->to . "&api_key=" . $this->apiKey);
     }
 
-    #[NoReturn] public function checkAndSaveData(): void
+    public function checkAndSaveData(): string
     {
         $response = json_decode($this->getDataFromApi()->body(), true);
 
+        $message = '';
         if (!key_exists('error', $response)) {
             $this->saveData($response);
-            exit('Successfully saved to the asteroid table');
+            $message = 'Successfully saved to the asteroid table';
         } else {
-            exit($response['error']['message']);
+            $message = $response['error']['message'];
         }
+
+        return $message;
     }
 
     private function saveData(array $data): void

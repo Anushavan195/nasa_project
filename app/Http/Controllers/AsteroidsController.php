@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use App\Models\Asteroid;
 use Illuminate\Http\Request;
+use App\Models\Asteroid;
 
 class AsteroidsController extends Controller
 {
-    private $pageCount = 5;
+    private int $pageCount = 5;
 
     public function index(): JsonResponse
     {
@@ -24,13 +24,16 @@ class AsteroidsController extends Controller
         return response()->json($asteroid);
     }
 
-    public function getBestYearWithAsteroids(Request $request): JsonResponse
+    public function getBestPeriodWithAsteroids(Request $request, string $period): JsonResponse
     {
-        $hazardous = (bool)$request->get('hazardous') ?? false;
+        $dateType = $this->checkPeriod($period);
 
-        $yearWithAsteroids = Asteroid::get()->where('is_hazardous', $hazardous)->groupBy('date')->toArray();
-        if (!empty($yearWithAsteroids)) {
-            $countInYear = $this->getDateWithAsteroids($yearWithAsteroids, 'Y');
+        $hazardous = $this->isHazardous($request);
+
+        $periodWithAsteroids = Asteroid::get()->where('is_hazardous', $hazardous)->groupBy('date')->toArray();
+
+        if (!empty($periodWithAsteroids) && $dateType) {
+            $countInYear = $this->getDateWithAsteroids($periodWithAsteroids, $dateType);
         } else {
             $countInYear = [
                 'success' => false,
@@ -40,26 +43,21 @@ class AsteroidsController extends Controller
         return response()->json($countInYear);
     }
 
-    public function getBestMonthWithAsteroids(Request $request): JsonResponse
-    {
-        $hazardous = $this->isHazardous($request);
-
-        $monthWithAsteroids = Asteroid::get()->where('is_hazardous', $hazardous)->groupBy('date')->toArray();
-
-        if (!empty($monthWithAsteroids)) {
-            $countInMonth = $this->getDateWithAsteroids($monthWithAsteroids, 'M');
-        } else {
-            $countInMonth = [
-                'success' => false
-            ];
-        }
-
-        return response()->json($countInMonth);
-    }
-
-    private function isHazardous($request): bool
+    private function isHazardous(Request $request): bool
     {
         return (bool)$request->get('hazardous') ?? false;
+    }
+
+    private function checkPeriod(string $period): null|string
+    {
+        $dateType = null;
+        if ($period == 'best-month') {
+            $dateType = 'M';
+        } elseif ($period == 'best-year') {
+            $dateType = 'Y';
+        }
+
+        return $dateType;
     }
 
     private function getDateWithAsteroids(array $data, string $dateType): array
@@ -101,5 +99,4 @@ class AsteroidsController extends Controller
 
         return $dateWithData;
     }
-
 }

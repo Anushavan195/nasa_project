@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AsteroidsController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Http;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +17,7 @@ use Illuminate\Support\Facades\Http;
 Route::prefix('/neo')->group(function (){
     Route::post('/hazardous', [AsteroidsController::class, 'index']);
     Route::post('/fastest', [AsteroidsController::class, 'getTheFasterAsteroid']);
-    Route::post('/best-year', [AsteroidsController::class, 'getBestYearWithAsteroids']);
-    Route::post('/best-month', [AsteroidsController::class, 'getBestMonthWithAsteroids']);
+    Route::post('/{period}', [AsteroidsController::class, 'getBestPeriodWithAsteroids'])->where([
+        'period' => 'best-year|best-month'
+    ]);
 });

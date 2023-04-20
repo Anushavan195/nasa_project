@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id()->autoIncrement();
             $table->string('name')->unique();
             $table->date('date');
-            $table->string('reference');
+            $table->string('reference')->unique();
             $table->string('speed');
             $table->boolean('is_hazardous');
             $table->timestamps();

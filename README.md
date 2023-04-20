@@ -10,7 +10,7 @@ $ php artisan migrate
 
 For get data and save in DB
 
-$ php artisan save-data-from-api
+$ php artisan api:save-data-from-api
 
 for run app
 

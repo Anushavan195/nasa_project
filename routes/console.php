@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Inspiring;
-use App\Http\ApiClient\ApiConnector;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +18,3 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Artisan::command('save-data-from-api', function () {
-    (new ApiConnector())->checkAndSaveData();
-});
